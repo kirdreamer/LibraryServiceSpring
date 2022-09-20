@@ -1,6 +1,6 @@
 package com.edu.ulab.app.web.handler;
 
-import com.edu.ulab.app.exception.IncorrectRequestBodyException;
+import com.edu.ulab.app.exception.BadRequestBodyException;
 import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.web.response.BaseWebResponse;
 import lombok.NonNull;
@@ -22,8 +22,8 @@ public class ControllerExceptionHandler {
                 .body(new BaseWebResponse(createErrorMessage(exc)));
     }
 
-    @ExceptionHandler(IncorrectRequestBodyException.class)
-    public ResponseEntity<BaseWebResponse> handleIncorrectRequestBodyException(@NonNull final IncorrectRequestBodyException exc) {
+    @ExceptionHandler(BadRequestBodyException.class)
+    public ResponseEntity<BaseWebResponse> handleBadRequestBodyException(@NonNull final BadRequestBodyException exc) {
         log.error(exc.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new BaseWebResponse(createErrorMessage(exc)));

@@ -10,5 +10,5 @@ public class UserEntity {
     private String fullName;
     private String title;
     private int age;
-    private List<Long> booksIdList;
+    private List<Long> bookList;
 }

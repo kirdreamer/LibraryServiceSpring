@@ -1,15 +1,14 @@
 package com.edu.ulab.app.repository;
 
-import com.edu.ulab.app.dto.BookDto;
+import com.edu.ulab.app.entity.BookEntity;
 
 public interface BookRepository {
 
-    void addBook(BookDto bookDto);
+    BookEntity addBook(BookEntity bookEntity);
 
-    BookDto getBookById(Long id);
+    BookEntity getBookById(Long id);
 
     void deleteBookById(Long id);
 
-    void updateBook(BookDto bookDto, Long id);
-
+    BookEntity updateBook(BookEntity bookEntity, Long id);
 }

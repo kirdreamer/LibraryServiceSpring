@@ -2,7 +2,7 @@ package com.edu.ulab.app.facade;
 
 import com.edu.ulab.app.dto.BookDto;
 import com.edu.ulab.app.dto.UserDto;
-import com.edu.ulab.app.exception.IncorrectRequestBodyException;
+import com.edu.ulab.app.exception.BadRequestBodyException;
 import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.mapper.UserMapper;
@@ -29,7 +29,7 @@ public class UserDataFacade {
 
     public UserBookResponse createUserWithBooks(UserBookRequest userBookRequest) {
         if (userBookRequest.getUserRequest() == null)
-            throw new IncorrectRequestBodyException("User Body is empty");
+            throw new BadRequestBodyException("User Body is empty");
 
         log.info("Received request to create user with books: {}", userBookRequest);
         UserDto userDto = userMapper.userRequestToUserDto(userBookRequest.getUserRequest());
@@ -46,13 +46,16 @@ public class UserDataFacade {
                     )).build();
         }
 
-        List<Long> bookIdList = getBookIdListFromFilteredAndAddedInDatabaseRequest(
+        List<Long> userBookList = getUserBookListFromFilteredAndAddedInDatabaseRequest(
                 userBookRequest,
                 createdUser.getId()
         );
-        log.info("Collected book ids: {}", bookIdList);
+        log.info("Collected book ids: {}", userBookList);
 
-        userService.updateBookIdList(bookIdList, createdUser.getId());
+        log.info(
+                "User's book list was updated. Actual data:{}",
+                userService.updateUserBookList(userBookList, createdUser.getId())
+        );
 
         return UserBookResponse.builder()
                 .userResponse(userMapper.userDtoToUserResponse(
@@ -64,17 +67,17 @@ public class UserDataFacade {
     public UserBookResponse updateUserWithBooks(UserBookRequest userBookRequest, Long userId) {
         log.info("Received request to update user with books by id {}", userId);
         if (userBookRequest.getUserRequest() == null)
-            throw new IncorrectRequestBodyException("User Body is empty");
+            throw new BadRequestBodyException("User Body is empty");
         if (userService.getUserById(userId) == null)
             throw new NotFoundException("User wasn't found");
 
         UserDto userDto = userMapper.userRequestToUserDto(userBookRequest.getUserRequest());
         log.info("Mapped user request: {}", userDto);
 
-        List<Long> bookIdList = userService.getBookIdListById(userId);
+        List<Long> userBookList = userService.getUserBookListById(userId);
         userService.updateUser(userDto, userId);
-        if (bookIdList != null)
-            bookIdList.forEach(bookService::deleteBookById);
+        if (userBookList != null)
+            userBookList.forEach(bookService::deleteBookById);
 
         if (userBookRequest.getBookRequests() == null) {
             log.info("User doesn't have any books");
@@ -84,13 +87,16 @@ public class UserDataFacade {
                     )).build();
         }
 
-        bookIdList = getBookIdListFromFilteredAndAddedInDatabaseRequest(
+        userBookList = getUserBookListFromFilteredAndAddedInDatabaseRequest(
                 userBookRequest,
                 userId
         );
-        log.info("Collected book ids: {}", bookIdList);
+        log.info("Collected book ids: {}", userBookList);
 
-        userService.updateBookIdList(bookIdList, userId);
+        log.info(
+                "User's book list was updated. Actual data:{}",
+                userService.updateUserBookList(userBookList, userId)
+        );
 
         return UserBookResponse.builder()
                 .userResponse(userMapper.userDtoToUserResponse(
@@ -104,7 +110,7 @@ public class UserDataFacade {
         if (userService.getUserById(userId) == null)
             throw new NotFoundException("User wasn't found");
 
-        if (userService.getBookIdListById(userId) == null)
+        if (userService.getUserBookListById(userId) == null)
             return UserBookResponse.builder().userResponse(userMapper.userDtoToUserResponse(
                     userService.getUserById(userId)
             )).build();
@@ -122,7 +128,7 @@ public class UserDataFacade {
         if (userService.getUserById(userId) == null)
             throw new NotFoundException("User wasn't found");
 
-        List<Long> bookIdList = userService.getBookIdListById(userId);
+        List<Long> bookIdList = userService.getUserBookListById(userId);
 
         userService.deleteUserById(userId);
 
@@ -133,7 +139,7 @@ public class UserDataFacade {
             });
     }
 
-    private List<Long> getBookIdListFromFilteredAndAddedInDatabaseRequest(UserBookRequest userBookRequest, Long userId) {
+    private List<Long> getUserBookListFromFilteredAndAddedInDatabaseRequest(UserBookRequest userBookRequest, Long userId) {
         return userBookRequest.getBookRequests()
                 .stream()
                 .filter(Objects::nonNull)
@@ -147,7 +153,7 @@ public class UserDataFacade {
     }
 
     private List<BookResponse> getAllBooksByUserId(Long userId) {
-        return userService.getBookIdListById(userId)
+        return userService.getUserBookListById(userId)
                 .stream()
                 .map(bookService::getBookById)
                 .map(bookMapper::bookDtoToBookResponse)

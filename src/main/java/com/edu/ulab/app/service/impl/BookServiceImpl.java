@@ -1,6 +1,7 @@
 package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.BookDto;
+import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.repository.BookRepository;
 import com.edu.ulab.app.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -13,21 +14,25 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
 
     @Override
     public BookDto createBook(BookDto bookDto) {
-        bookRepository.addBook(bookDto);
-        return bookDto;
+        return bookMapper.bookEntityToBookDto(
+                bookRepository.addBook(bookMapper.bookDtoToBookEntity(bookDto))
+        );
     }
 
     @Override
-    public void updateBook(BookDto bookDto, Long id) {
-        bookRepository.updateBook(bookDto, id);
+    public BookDto updateBook(BookDto bookDto, Long id) {
+        return bookMapper.bookEntityToBookDto(
+                bookRepository.updateBook(bookMapper.bookDtoToBookEntity(bookDto), id)
+        );
     }
 
     @Override
     public BookDto getBookById(Long id) {
-        return bookRepository.getBookById(id);
+        return bookMapper.bookEntityToBookDto(bookRepository.getBookById(id));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.UserDto;
+import com.edu.ulab.app.mapper.UserMapper;
 import com.edu.ulab.app.repository.UserRepository;
 import com.edu.ulab.app.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,31 +16,37 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        userRepository.addUser(userDto);
-        return userDto;
+        return userMapper.userEntityToUserDto(
+                userRepository.addUser(userMapper.userDtoToUserEntity(userDto))
+        );
     }
 
     @Override
-    public void updateBookIdList(List<Long> bookIdList, Long userId) {
-        userRepository.updateBookIdList(bookIdList, userId);
+    public UserDto updateUserBookList(List<Long> userBookList, Long userId) {
+        return userMapper.userEntityToUserDto(
+                userRepository.updateUserBookList(userBookList, userId)
+        );
     }
 
     @Override
-    public List<Long> getBookIdListById(Long id) {
-        return userRepository.getUserBooksIdListById(id);
+    public List<Long> getUserBookListById(Long id) {
+        return userRepository.getUserBookList(id);
     }
 
     @Override
-    public void updateUser(UserDto userDto, Long id) {
-        userRepository.updateUser(userDto, id);
+    public UserDto updateUser(UserDto userDto, Long id) {
+        return userMapper.userEntityToUserDto(
+                userRepository.updateUser(userMapper.userDtoToUserEntity(userDto), id)
+        );
     }
 
     @Override
     public UserDto getUserById(Long id) {
-        return userRepository.getUser(id);
+        return userMapper.userEntityToUserDto(userRepository.getUser(id));
     }
 
     @Override

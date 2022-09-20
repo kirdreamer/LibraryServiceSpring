@@ -4,9 +4,9 @@ package com.edu.ulab.app.service;
 import com.edu.ulab.app.dto.BookDto;
 
 public interface BookService {
-    BookDto createBook(BookDto userDto);
+    BookDto createBook(BookDto bookDto);
 
-    void updateBook(BookDto userDto, Long id);
+    BookDto updateBook(BookDto bookDto, Long id);
 
     BookDto getBookById(Long id);
 
