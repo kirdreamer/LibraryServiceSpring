@@ -19,21 +19,23 @@ public class Storage {
 
     private Map<Long, UserEntity> userStorage = new HashMap<>();
 
-    public void saveUserInStorage(UserEntity userEntity) {
+    public long saveUserInStorage(UserEntity userEntity) {
         userEntity.setId(userIdCounter);
         getUserStorage().put(
-                userIdCounter++,
+                userIdCounter,
                 userEntity
         );
+        return userIdCounter++;
     }
 
     private Map<Long, BookEntity> bookStorage = new HashMap<>();
 
-    public void saveBookInStorage(BookEntity bookEntity) {
+    public long saveBookInStorage(BookEntity bookEntity) {
         bookEntity.setId(bookIdCounter);
         getBookStorage().put(
-                bookIdCounter++,
+                bookIdCounter,
                 bookEntity
         );
+        return bookIdCounter++;
     }
 }
