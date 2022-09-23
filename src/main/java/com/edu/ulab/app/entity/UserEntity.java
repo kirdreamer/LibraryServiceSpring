@@ -1,11 +1,14 @@
-package com.edu.ulab.app.web.response;
+package com.edu.ulab.app.entity;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class UserResponse {
+public class UserEntity {
     private Long id;
     private String fullName;
     private String title;
     private int age;
+    private List<Long> bookList;
 }
