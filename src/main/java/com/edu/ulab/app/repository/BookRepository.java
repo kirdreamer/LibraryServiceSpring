@@ -1,14 +1,14 @@
 package com.edu.ulab.app.repository;
 
-import com.edu.ulab.app.dto.BookDto;
+import com.edu.ulab.app.entity.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-public interface BookRepository {
+import java.util.List;
 
-    BookDto addBook(BookDto bookDto);
-
-    BookDto getBookById(Long id);
-
-    void deleteBookById(Long id);
-
-    BookDto updateBook(BookDto bookDto, Long id);
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> {
+    @Query("SELECT b from Book b WHERE b.userId = :userId")
+    List<Book> findByUserId(long userId);
 }
